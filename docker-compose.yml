@@ -1,0 +1,33 @@
+version: "3.4"
+
+services:
+  db:
+    image: postgres:12.3-alpine
+    environment:
+      POSTGRES_USER: builder
+      POSTGRES_PASSWORD: builder
+    ports:
+      - 5432:5432
+    volumes:
+      - ./.data/pgdata:/var/lib/postgresql/data
+
+  minio:
+    image: minio/minio:RELEASE.2019-08-07T01-59-21Z
+    command: server /data
+    ports:
+      - 9000:9000
+    volumes:
+      - ./.data/miniodata:/data
+    environment:
+      MINIO_ACCESS_KEY: SYmuS-lZ3J39PjejLCiZ
+      MINIO_SECRET_KEY: 5yGXYIjUTw5aecYgGoBudpMs0drw26csJY39dVkR
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: ./Dockerfile.dev
+    ports:
+      - 8080:80
+    volumes:
+      - ./nginx:/etc/nginx
+    command: ./start.sh
