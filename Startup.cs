@@ -33,7 +33,9 @@ namespace WebUI
             services.AddScoped<IAsyncSaver, S3StorageSaver>();
             services.AddScoped<IAsyncReporter, TelegramReporter>();
             services.AddScoped<BackupSaver>();
+            services.AddScoped<AmazonS3Client>();
         }
+
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
