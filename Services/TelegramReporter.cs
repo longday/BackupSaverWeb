@@ -13,7 +13,9 @@ namespace WebUI.Services
     public sealed class TelegramReporter : IAsyncReporter
     {
         public string ConnectionString { get; set; }
+        
         private readonly IDiagnosticLogger _logger;
+        
         private static readonly HttpClient Client;
 
         static TelegramReporter()
