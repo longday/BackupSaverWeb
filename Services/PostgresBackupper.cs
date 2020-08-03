@@ -19,6 +19,11 @@ namespace WebUI.Services
         
         private readonly IDiagnosticLogger _logger;
 
+        public PostgresBackupper()
+        {
+                
+        }
+        
         public PostgresBackupper(string dbList, PostgresBackupperConfig config, IDiagnosticLogger logger)
         {
             Config = config ?? throw new ArgumentNullException(nameof(config));

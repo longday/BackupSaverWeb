@@ -15,6 +15,11 @@ namespace WebUI.Services
         
         public string Password { get; set; }
 
+        public PostgresBackupperConfig()
+        {
+            
+        }
+
         public PostgresBackupperConfig(string host, string port, string username, string password)
         {
             Host = host ?? throw new ArgumentNullException(nameof(host));

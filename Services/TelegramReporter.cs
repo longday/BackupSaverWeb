@@ -23,6 +23,11 @@ namespace WebUI.Services
             Client = new HttpClient();
         }
 
+        public TelegramReporter()
+        {
+            
+        }
+        
         public TelegramReporter(string connectionString, IDiagnosticLogger logger)
         {
             ConnectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));

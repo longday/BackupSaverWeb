@@ -19,6 +19,11 @@ namespace WebUI.Services
         public string Bucket { get; set; }
         
         private readonly IDiagnosticLogger _logger;
+
+        public S3StorageSaver()
+        {
+            
+        }
         
         public S3StorageSaver(AmazonS3Client client, string bucket, IDiagnosticLogger logger)
         {

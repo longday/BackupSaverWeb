@@ -16,6 +16,11 @@ namespace WebUI.Services
         
         public string Bucket { get; set; }
 
+        public S3ObjectRemover()
+        {
+            
+        }
+        
         public S3ObjectRemover(AmazonS3Client client, string bucket)
         {
             Client = client ?? throw new ArgumentNullException(nameof(client));
