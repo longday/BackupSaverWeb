@@ -15,14 +15,15 @@ namespace WebUI.Services
     public sealed class PostgresBackupper : IAsyncBackupper
     {
         public PostgresBackupperConfig Config { get; set; }
-        private readonly string _dbList;
+        public string DbList { get; set; }
+        
         private readonly IDiagnosticLogger _logger;
 
         public PostgresBackupper(string dbList, PostgresBackupperConfig config, IDiagnosticLogger logger)
         {
             Config = config ?? throw new ArgumentNullException(nameof(config));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _dbList = dbList ?? throw new ArgumentNullException(nameof(dbList));
+            DbList = dbList ?? throw new ArgumentNullException(nameof(dbList));
         }
 
         public async Task<string> MakeBackupAsync()
@@ -39,7 +40,7 @@ namespace WebUI.Services
             
             Directory.CreateDirectory(outFilePath);
             
-            string[] databases = _dbList.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            string[] databases = DbList.Split(',', StringSplitOptions.RemoveEmptyEntries);
             
             _logger.Log(SentryLevel.Info, "Creating sql files....");
 
