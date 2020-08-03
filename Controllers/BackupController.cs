@@ -31,7 +31,7 @@ namespace WebUI.Controllers
             {
                 try
                 {
-                    int backupDeletionPeriodInDays = int.Parse(Environment.GetEnvironmentVariable("BACKUP_DELETION_PERIOD_IN_DAYS"));
+                    int backupDeletionPeriodInDays = int.Parse(Environment.GetEnvironmentVariable("BACKUP_DELETION_PERIOD_IN_DAYS") ?? throw new ArgumentNullException());
                     string message = $"Items uploaded earlier than in the last {backupDeletionPeriodInDays} days have been removed";
 
                     await _backupSaver.MakeBackupsAsync(backupDeletionPeriodInDays, message);
