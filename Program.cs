@@ -20,6 +20,7 @@ namespace WebUI
                 .ConfigureLogging(logging =>
                 {
                     logging.AddConsole();
+                    logging.AddSentry();
                 });
     }
 }
