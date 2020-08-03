@@ -1,13 +1,10 @@
-using WebUI.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Sentry.Extensibility;
-using Sentry.Infrastructure;
-using WebUI.Services.Interfaces;
+using WebUI.Extensions;
 
 namespace WebUI
 {
@@ -29,12 +26,7 @@ namespace WebUI
                 configuration.RootPath = "ClientApp/build";
             });
 
-            services.AddScoped<IAsyncBackupper, PostgresBackupper>();
-            services.AddScoped<IAsyncRemover, S3ObjectRemover>();
-            services.AddScoped<IAsyncSaver, S3StorageSaver>();
-            services.AddScoped<IAsyncReporter, TelegramReporter>();
-            services.AddScoped<IDiagnosticLogger, ConsoleDiagnosticLogger>();
-            services.AddScoped<BackupSaver>();
+            services.AddBackupServices();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
