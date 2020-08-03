@@ -1,3 +1,4 @@
+using Amazon.S3;
 using WebUI.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
