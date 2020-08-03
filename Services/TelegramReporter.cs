@@ -12,7 +12,7 @@ namespace WebUI.Services
     /// </summary>
     public sealed class TelegramReporter : IAsyncReporter
     {
-        private readonly string _connectionString;
+        public string ConnectionString { get; set; }
         private readonly IDiagnosticLogger _logger;
         private static readonly HttpClient Client;
 
@@ -23,7 +23,7 @@ namespace WebUI.Services
 
         public TelegramReporter(string connectionString, IDiagnosticLogger logger)
         {
-            _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
+            ConnectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -32,9 +32,9 @@ namespace WebUI.Services
             if (string.IsNullOrWhiteSpace(message))
                 throw new ArgumentNullException(nameof(message));
 
-            _logger.Log(SentryLevel.Info, $"Sending message to {_connectionString}....");
+            _logger.Log(SentryLevel.Info, $"Sending message to {ConnectionString}....");
             
-            await Client.PostAsync(_connectionString, new StringContent("{\"text\":\"BackupSaver: " + message + "\"}"));
+            await Client.PostAsync(ConnectionString, new StringContent("{\"text\":\"BackupSaver: " + message + "\"}"));
             
             _logger.Log(SentryLevel.Info, "Successfully...");
         }
