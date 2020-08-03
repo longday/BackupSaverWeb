@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Sentry.Extensibility;
 using Sentry.Infrastructure;
+using Sentry.Protocol;
 using WebUI.Services;
 using WebUI.Services.Interfaces;
 
@@ -14,7 +15,7 @@ namespace WebUI.Extensions
             services.AddScoped<IAsyncRemover, S3ObjectRemover>();
             services.AddScoped<IAsyncSaver, S3StorageSaver>();
             services.AddScoped<IAsyncReporter, TelegramReporter>();
-            services.AddScoped<IDiagnosticLogger, ConsoleDiagnosticLogger>();
+            services.AddScoped<IDiagnosticLogger>(sp => new ConsoleDiagnosticLogger(SentryLevel.Info));
             services.AddScoped<BackupSaver>();
         }
     }
