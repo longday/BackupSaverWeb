@@ -20,7 +20,6 @@ namespace WebUI
 
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllersWithViews();
 
             services.AddSpaStaticFiles(configuration =>
