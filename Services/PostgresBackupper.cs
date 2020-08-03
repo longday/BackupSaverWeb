@@ -15,6 +15,7 @@ namespace WebUI.Services
     public sealed class PostgresBackupper : IAsyncBackupper
     {
         public PostgresBackupperConfig Config { get; set; }
+        
         public string DbList { get; set; }
         
         private readonly IDiagnosticLogger _logger;
