@@ -41,6 +41,9 @@ namespace WebUI.Controllers
                 {
                     SentrySdk.CaptureException(ex);
                     SentrySdk.CaptureMessage("BackupSaver completed work with error!");
+                    _logger.LogError("BackupSaver completed work with error!");
+
+                    await Task.FromException<Exception>(ex);
                 }
             }
 
