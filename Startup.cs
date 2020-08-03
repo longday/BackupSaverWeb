@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Sentry.Extensibility;
+using Sentry.Infrastructure;
 using WebUI.Services.Interfaces;
 
 namespace WebUI
@@ -31,6 +33,7 @@ namespace WebUI
             services.AddScoped<IAsyncRemover, S3ObjectRemover>();
             services.AddScoped<IAsyncSaver, S3StorageSaver>();
             services.AddScoped<IAsyncReporter, TelegramReporter>();
+            services.AddScoped<IDiagnosticLogger, ConsoleDiagnosticLogger>();
             services.AddScoped<BackupSaver>();
         }
 

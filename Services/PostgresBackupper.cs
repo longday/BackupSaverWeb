@@ -3,7 +3,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+using Sentry.Extensibility;
+using Sentry.Protocol;
 using WebUI.Services.Interfaces;
 
 namespace WebUI.Services
@@ -16,14 +17,14 @@ namespace WebUI.Services
         public PostgresBackupperConfig Config { get; set; }
         public string DbList { get; set; }
         
-        private readonly ILogger<PostgresBackupper> _logger;
+        private readonly IDiagnosticLogger _logger;
 
         public PostgresBackupper()
         {
                 
         }
         
-        public PostgresBackupper(string dbList, PostgresBackupperConfig config, ILogger<PostgresBackupper> logger)
+        public PostgresBackupper(string dbList, PostgresBackupperConfig config, IDiagnosticLogger logger)
         {
             Config = config ?? throw new ArgumentNullException(nameof(config));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -34,8 +35,8 @@ namespace WebUI.Services
         {
             Environment.SetEnvironmentVariable("PGPASSWORD", Config.Password);
             
-            _logger.Log(LogLevel.Information, "Set PGPASSWORD...");
-            _logger.Log(LogLevel.Information, "Successfully...");
+            _logger.Log(SentryLevel.Info, "Set PGPASSWORD...");
+            _logger.Log(SentryLevel.Info, "Successfully...");
             
             string outFilePath = Path.Combine(
                 Path.GetTempPath(),
@@ -46,24 +47,24 @@ namespace WebUI.Services
             
             string[] databases = DbList.Split(',', StringSplitOptions.RemoveEmptyEntries);
             
-            _logger.Log(LogLevel.Information, "Creating sql files....");
+            _logger.Log(SentryLevel.Info, "Creating sql files....");
 
             await CreateSqlFilesAsync(databases, outFilePath, Config)
                 .ConfigureAwait(false);
             
-            _logger.Log(LogLevel.Information, "Successfully...");
-            _logger.Log(LogLevel.Information, "Creating result archive....");
+            _logger.Log(SentryLevel.Info, "Successfully...");
+            _logger.Log(SentryLevel.Info, "Creating result archive....");
 
             string archivePath = await CreateArchiveAsync(outFilePath, $"{DateTime.Now:yyyy-dd-M--HH-mm-ss}")
                 .ConfigureAwait(false);
             
-            _logger.Log(LogLevel.Information, "Successfully...");
-            _logger.Log(LogLevel.Information, $"Removing intermediate folder {Path.GetFileNameWithoutExtension(outFilePath)}...");
+            _logger.Log(SentryLevel.Info, "Successfully...");
+            _logger.Log(SentryLevel.Info, $"Removing intermediate folder {Path.GetFileNameWithoutExtension(outFilePath)}...");
             
             if(Directory.Exists(outFilePath))
                 Directory.Delete(outFilePath, true);
 
-            _logger.Log(LogLevel.Information, "Successfully");
+            _logger.Log(SentryLevel.Info, "Successfully");
             
             return archivePath;
         }
