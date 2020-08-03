@@ -4,7 +4,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Sentry.Protocol;
 using WebUI.Services.Interfaces;
 
 namespace WebUI.Services
