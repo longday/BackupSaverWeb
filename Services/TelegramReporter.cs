@@ -3,6 +3,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Sentry.Extensibility;
+using Sentry.Infrastructure;
 using Sentry.Protocol;
 
 namespace WebUI.Services
@@ -25,7 +26,7 @@ namespace WebUI.Services
 
         public TelegramReporter()
         {
-            
+            _logger = new ConsoleDiagnosticLogger(SentryLevel.Info);
         }
         
         public TelegramReporter(string connectionString, IDiagnosticLogger logger)

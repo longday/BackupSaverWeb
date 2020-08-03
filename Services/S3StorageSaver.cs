@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using Sentry.Extensibility;
+using Sentry.Infrastructure;
 using Sentry.Protocol;
 using WebUI.Services.Interfaces;
 
@@ -22,7 +23,7 @@ namespace WebUI.Services
 
         public S3StorageSaver()
         {
-            
+            _logger = new ConsoleDiagnosticLogger(SentryLevel.Info);
         }
         
         public S3StorageSaver(AmazonS3Client client, string bucket, IDiagnosticLogger logger)

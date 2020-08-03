@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Sentry.Extensibility;
+using Sentry.Infrastructure;
 using Sentry.Protocol;
 using WebUI.Services.Interfaces;
 
@@ -22,7 +23,7 @@ namespace WebUI.Services
 
         public PostgresBackupper()
         {
-                
+            _logger = new ConsoleDiagnosticLogger(SentryLevel.Info);
         }
         
         public PostgresBackupper(string dbList, PostgresBackupperConfig config, IDiagnosticLogger logger)
