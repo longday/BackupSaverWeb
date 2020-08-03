@@ -12,13 +12,14 @@ namespace WebUI.Services
     /// </summary>
     public sealed class S3ObjectRemover : IAsyncRemover
     {
-        private readonly AmazonS3Client _client;
-        private readonly string _bucket;
+        public  AmazonS3Client Client { get; set; }
+        
+        public string Bucket { get; set; }
 
         public S3ObjectRemover(AmazonS3Client client, string bucket)
         {
-            _client = client ?? throw new ArgumentNullException(nameof(client));
-            _bucket = bucket ?? throw new ArgumentNullException(nameof(bucket));
+            Client = client ?? throw new ArgumentNullException(nameof(client));
+            Bucket = bucket ?? throw new ArgumentNullException(nameof(bucket));
         }
 
         public async Task RemoveAsync(int quantity)
@@ -28,10 +29,10 @@ namespace WebUI.Services
 
             var getRequest = new ListObjectsV2Request()
             {
-                BucketName = _bucket,
+                BucketName = Bucket,
             };
 
-            var getResponse = await _client.ListObjectsV2Async(getRequest).ConfigureAwait(continueOnCapturedContext: false);
+            var getResponse = await Client.ListObjectsV2Async(getRequest).ConfigureAwait(continueOnCapturedContext: false);
             if (getResponse.S3Objects.Count > 0)
             {
                 var oldestDay = getResponse.S3Objects.Max(o => o.LastModified.Day) - quantity;
@@ -42,11 +43,11 @@ namespace WebUI.Services
                 {
                     var deleteRequest = new DeleteObjectsRequest()
                     {
-                        BucketName = _bucket,
+                        BucketName = Bucket,
                         Objects = keys
                     };
 
-                    await _client.DeleteObjectsAsync(deleteRequest)
+                    await Client.DeleteObjectsAsync(deleteRequest)
                         .ConfigureAwait(continueOnCapturedContext: false);
                 }
                 else
