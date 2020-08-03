@@ -31,10 +31,10 @@ namespace WebUI.Controllers
             {
                 try
                 {
-                    int backupDeletionPeriodInDays = int.Parse(Environment.GetEnvironmentVariable("BACKUP_DELETION_PERIOD_IN_DAYS") ?? throw new ArgumentNullException());
-                    string message = $"Items uploaded earlier than in the last {backupDeletionPeriodInDays} days have been removed";
+                    int backupDeletionPeriodInMin = int.Parse(Environment.GetEnvironmentVariable("BACKUP_DELETION_PERIOD_IN_MINUTES") ?? throw new ArgumentNullException());
+                    string message = $"Items uploaded earlier than in the last {backupDeletionPeriodInMin} days have been removed";
 
-                    await _backupSaver.MakeBackupsAsync(backupDeletionPeriodInDays, message);
+                    await _backupSaver.MakeBackupsAsync(backupDeletionPeriodInMin, message);
         
                 }
                 catch(Exception ex)
