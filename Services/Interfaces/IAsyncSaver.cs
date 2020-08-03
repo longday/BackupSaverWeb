@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Amazon.S3;
 
 namespace WebUI.Services.Interfaces
 {
@@ -7,6 +8,10 @@ namespace WebUI.Services.Interfaces
     /// </summary>
     public interface IAsyncSaver
     {
+        public  AmazonS3Client Client { get; set; }
+        
+        public string Bucket { get; set; }
+        
         Task SaveAsync(string source);
     }
 }
