@@ -14,14 +14,16 @@ namespace WebUI.Services
     /// </summary>
     public sealed class S3StorageSaver : IAsyncSaver
     {
-        private readonly AmazonS3Client _client;
-        private readonly string _bucket;
+        public AmazonS3Client Client { get; set; }
+        
+        public string Bucket { get; set; }
+        
         private readonly IDiagnosticLogger _logger;
         
         public S3StorageSaver(AmazonS3Client client, string bucket, IDiagnosticLogger logger)
         {
-            _client = client ?? throw new ArgumentNullException(nameof(client));
-            _bucket = bucket ?? throw new ArgumentNullException(nameof(bucket));
+            Client = client ?? throw new ArgumentNullException(nameof(client));
+            Bucket = bucket ?? throw new ArgumentNullException(nameof(bucket));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -37,14 +39,14 @@ namespace WebUI.Services
             _logger.Log(SentryLevel.Info, "Successfully...");
             _logger.Log(SentryLevel.Info, "Constructing putBackupFileRequest....");
 
-            var putBackupFileRequest = ConstructPutObjectRequest(_bucket,
+            var putBackupFileRequest = ConstructPutObjectRequest(Bucket,
                 $"{DateTime.Now.Year}" + "/" + $"{DateTime.Now.Month}" + "/" + $"{DateTime.Now.Day}" + "/" +
                 Path.GetFileNameWithoutExtension(source), source);
 
             _logger.Log(SentryLevel.Info, "Successfully");
             _logger.Log(SentryLevel.Info, $"Upload {Path.GetFileNameWithoutExtension(source)}...");
             
-            await _client.PutObjectAsync(putBackupFileRequest);
+            await Client.PutObjectAsync(putBackupFileRequest);
             
             _logger.Log(SentryLevel.Info, "Successfully");
         }
@@ -52,34 +54,34 @@ namespace WebUI.Services
         private async Task CreateDirectoryHierarchyAsync()
         {
             _logger.Log(SentryLevel.Info, "Constructing putYearFolderRequest...");
-            var putYearFolderRequest = ConstructPutObjectRequest(_bucket, $"{DateTime.Now.Year}" + "/");
+            var putYearFolderRequest = ConstructPutObjectRequest(Bucket, $"{DateTime.Now.Year}" + "/");
             
             _logger.Log(SentryLevel.Info, "Successfully");
             _logger.Log(SentryLevel.Info, "Creating year folder");
             
-            await _client.PutObjectAsync(putYearFolderRequest);
+            await Client.PutObjectAsync(putYearFolderRequest);
             
             _logger.Log(SentryLevel.Info, "Successfully");
             _logger.Log(SentryLevel.Info, "Constructing putMonthFolderRequest...");
             
             var putMonthFolderRequest =
-                ConstructPutObjectRequest(_bucket, $"{DateTime.Now.Year}" + "/" + $"{DateTime.Now.Month}" + "/");
+                ConstructPutObjectRequest(Bucket, $"{DateTime.Now.Year}" + "/" + $"{DateTime.Now.Month}" + "/");
             
             _logger.Log(SentryLevel.Info, "Successfully");
             _logger.Log(SentryLevel.Info, "Creating month folder...");
             
-            await _client.PutObjectAsync(putMonthFolderRequest);
+            await Client.PutObjectAsync(putMonthFolderRequest);
 
             _logger.Log(SentryLevel.Info, "Successfully");
             _logger.Log(SentryLevel.Info, "Constructing putDayFolderRequest...");
             
-            var putDayFolderRequest = ConstructPutObjectRequest(_bucket,
+            var putDayFolderRequest = ConstructPutObjectRequest(Bucket,
                 $"{DateTime.Now.Year}" + "/" + $"{DateTime.Now.Month}" + "/" + $"{DateTime.Now.Day}" + "/");
             
             _logger.Log(SentryLevel.Info, "Successfully");
             _logger.Log(SentryLevel.Info, "Creating day folder...");
             
-            await _client.PutObjectAsync(putDayFolderRequest);
+            await Client.PutObjectAsync(putDayFolderRequest);
 
             _logger.Log(SentryLevel.Info, "Successfully");
         }
