@@ -7,7 +7,6 @@ namespace WebUI.Services.Interfaces
     /// </summary>
     public interface IAsyncBackupper
     {
-        PostgresBackupperConfig Config { get; set; }
         string DbList { get; set; }
         
         Task<string> MakeBackupAsync();
