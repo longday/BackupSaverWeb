@@ -21,7 +21,7 @@ namespace WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task MakeBackup()
+        public async Task<bool> MakeBackup()
         {
             string sentryConnectionString = Environment.GetEnvironmentVariable("SENTRY_CONNECTION_STRING");
 
@@ -44,10 +44,14 @@ namespace WebUI.Controllers
                     _logger.LogError("BackupSaver completed work with error!");
 
                     await Task.FromException<Exception>(ex);
+
+                    return false;
                 }
             }
 
             _logger.LogInformation("Successfully");
+
+            return true;
         }
     }
 }
