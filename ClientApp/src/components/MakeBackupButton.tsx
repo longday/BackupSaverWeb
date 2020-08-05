@@ -21,7 +21,9 @@ export default function MakeBackupButton(): JSX.Element{
     
     return(
     <>
-        <button id="backup-btn" onClick={onClickedHandler}>Make Backup Now</button>
+        <div>
+            <button id="backup-btn" onClick={onClickedHandler}>Make Backup Now</button>
+        </div>
     </>
     );
 }
