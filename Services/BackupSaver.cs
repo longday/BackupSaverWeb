@@ -16,10 +16,10 @@ namespace WebUI.Services
         public BackupSaver(IAsyncBackupper backupper, IAsyncRemover remover, 
                        IAsyncSaver saver, IAsyncReporter reporter)
         {
-            _backupper = backupper;
-            _remover = remover;
-            _saver = saver;
-            _reporter = reporter;
+            _backupper = backupper ?? throw new ArgumentNullException(nameof(backupper));
+            _remover = remover ?? throw new ArgumentNullException(nameof(remover));
+            _saver = saver ?? throw new ArgumentNullException(nameof(saver));
+            _reporter = reporter ?? throw new ArgumentNullException(nameof(reporter));
         }
 
         public async Task MakeBackupsAsync(int quantity, string message)
