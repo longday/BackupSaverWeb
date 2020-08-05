@@ -1,10 +1,22 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 export default function MakeBackupButton(): JSX.Element{
     
-    const onClickedHandler = () : void =>{
-        fetch('backup');
-        alert('Бэкапы были успешно созданы!')
+    let [successed, setSuccessed] = useState(false);
+
+    async function onClickedHandler(): Promise<void>{
+        const response = await fetch('backup');
+
+        setSuccessed(response.bodyUsed);
+        
+        if(successed)
+        {
+            alert('Бэкапы были успешно созданы!');
+        }
+        else
+        {
+            alert('Произошла ошибка!');
+        }
     }
     
     return(
