@@ -3,7 +3,7 @@ import {LogTable} from './LogTable';
 
 export default function MakeBackupButton(): JSX.Element{
     
-    let [logs, setLogs] = useState([]);
+    let [logs, setLogs] = useState([""]);
     let [logTable, setLogTable] = useState(<div>
                                                 <LogTable logs={logs}/>
                                            </div>);
