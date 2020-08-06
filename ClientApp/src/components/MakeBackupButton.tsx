@@ -20,7 +20,7 @@ export default function MakeBackupButton(): JSX.Element{
         setLogTable(<div>
                         <LogTable logs={logs}/>
                     </div>);
-    });
+    }, [logs]);
     
     return(
     <>

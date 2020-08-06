@@ -24,7 +24,7 @@ export const LogTable: React.SFC<ILogProps> = (props) =>{
                 {props.logs.map(log => <tr>{log}</tr>)}
             </tbody>
         </table>);
-    });
+    }, [table]);
     
     return(
         <>
