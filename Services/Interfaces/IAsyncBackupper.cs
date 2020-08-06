@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace WebUI.Services.Interfaces
 {
@@ -7,6 +8,8 @@ namespace WebUI.Services.Interfaces
     /// </summary>
     public interface IAsyncBackupper
     {
+        List<string> Logs{ get; }
+
         string DbList { get; set; }
         
         Task<string> MakeBackupAsync();

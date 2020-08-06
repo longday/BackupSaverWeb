@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Sentry.Extensibility;
 using Sentry.Protocol;
@@ -15,6 +16,8 @@ namespace WebUI.Services
     public sealed class PostgresBackupper : IAsyncBackupper
     {
         public PostgresBackupperConfig Config { get; set; }
+
+        public List<string> Logs{ get; }
         
         public string DbList { get; set; }
         
@@ -25,13 +28,17 @@ namespace WebUI.Services
             Config = config ?? throw new ArgumentNullException(nameof(config));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             DbList = dbList ?? throw new ArgumentNullException(nameof(dbList));
+            Logs = new List<string>();
         }
 
         public async Task<string> MakeBackupAsync()
         {
             Environment.SetEnvironmentVariable("PGPASSWORD", Config.Password);
             
+            Logs.Add("Set PGPASSWORD...");
             _logger.Log(SentryLevel.Info, "Set PGPASSWORD...");
+
+            Logs.Add("Successfully...");
             _logger.Log(SentryLevel.Info, "Successfully...");
             
             string outFilePath = Path.Combine(
@@ -43,23 +50,31 @@ namespace WebUI.Services
             
             string[] databases = DbList.Split(',', StringSplitOptions.RemoveEmptyEntries);
             
+            Logs.Add("Creating sql files....");
             _logger.Log(SentryLevel.Info, "Creating sql files....");
 
             await CreateSqlFilesAsync(databases, outFilePath, Config)
                 .ConfigureAwait(false);
             
+            Logs.Add("Successfully...");
             _logger.Log(SentryLevel.Info, "Successfully...");
+
+            Logs.Add("Creating result archive....");
             _logger.Log(SentryLevel.Info, "Creating result archive....");
 
             string archivePath = await CreateArchiveAsync(outFilePath, $"{DateTime.Now:yyyy-dd-M--HH-mm-ss}")
                 .ConfigureAwait(false);
             
+            Logs.Add("Successfully...");
             _logger.Log(SentryLevel.Info, "Successfully...");
+
+            Logs.Add($"Removing intermediate folder {Path.GetFileNameWithoutExtension(outFilePath)}...");
             _logger.Log(SentryLevel.Info, $"Removing intermediate folder {Path.GetFileNameWithoutExtension(outFilePath)}...");
             
             if(Directory.Exists(outFilePath))
                 Directory.Delete(outFilePath, true);
 
+            Logs.Add("Successfully...");
             _logger.Log(SentryLevel.Info, "Successfully");
             
             return archivePath;

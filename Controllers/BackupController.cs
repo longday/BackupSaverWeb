@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 using Sentry;
 using WebUI.Services;
 
@@ -13,18 +14,21 @@ namespace WebUI.Controllers
     {
         private readonly ILogger<BackupController> _logger;
         private readonly BackupSaver _backupSaver;
+        private readonly List<string> _logs;
 
         public BackupController(ILogger<BackupController> logger, BackupSaver backupSaver)
         {
             _logger = logger;
             _backupSaver = backupSaver;
+            _logs = new List<string>();
         }
 
         [HttpGet]
-        public async Task<bool> MakeBackup()
+        public async Task<string[]> MakeBackup()
         {
             string sentryConnectionString = Environment.GetEnvironmentVariable("SENTRY_CONNECTION_STRING");
 
+            _logs.Add("Start pg_dump...");
             _logger.LogInformation("Start pg_dump...");
 
             using(SentrySdk.Init(sentryConnectionString))
@@ -35,23 +39,27 @@ namespace WebUI.Controllers
                     string message = $"Items uploaded earlier than in the last {backupDeletionPeriodInDays} days have been removed";
 
                     await _backupSaver.MakeBackupsAsync(backupDeletionPeriodInDays, message);
+
+                    _logs.AddRange(_backupSaver.Logs);
         
                 }
                 catch(Exception ex)
                 {
                     SentrySdk.CaptureException(ex);
-                    SentrySdk.CaptureMessage("BackupSaver completed work with error!");
+                    _logs.Add("BackupSaver completed work with error!");
                     _logger.LogError("BackupSaver completed work with error!");
 
                     await Task.FromException<Exception>(ex);
 
-                    return false;
+                    return _logs.ToArray();
                 }
             }
 
+            _logs.Add("Successfully");
             _logger.LogInformation("Successfully");
 
-            return true;
+            return _logs.Count > 0 ? _logs.ToArray() : new string[]{"No logs"};
+
         }
     }
 }
