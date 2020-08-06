@@ -3,7 +3,7 @@ import {LogTable} from './LogTable';
 
 export default function MakeBackupButton(): JSX.Element{
     
-    let [logs, setLogs] = useState(["Hello", "GoodBye"]);
+    let [logs, setLogs] = useState([]);
     let [logTable, setLogTable] = useState(<div>
                                                 <LogTable logs={logs}/>
                                            </div>);
@@ -14,6 +14,15 @@ export default function MakeBackupButton(): JSX.Element{
         const newLogs = await response.json();
 
         setLogs(newLogs);
+
+        if(logs.length > 0)
+        {
+            alert('Бэкапы были успешно созданы и сохранены');
+        }
+        else
+        {
+            alert('Приложение завершило работу с ошибкой')
+        }
     }
 
     useEffect(() => {
