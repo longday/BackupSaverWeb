@@ -1,29 +1,33 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import {LogTable} from './LogTable';
 
 export default function MakeBackupButton(): JSX.Element{
     
-    let [successed, setSuccessed] = useState(true);
+    let [logs, setLogs] = useState(["Hello", "GoodBye"]);
+    let [logTable, setLogTable] = useState(<div>
+                                                <LogTable logs={logs}/>
+                                           </div>);
 
     async function onClickedHandler(): Promise<void>{
         const response: Response = await fetch('backup');
 
-        setSuccessed(response.json() as unknown as boolean);
-        
-        if(successed)
-        {
-            alert('Бэкапы были успешно созданы!');
-        }
-        else
-        {
-            alert('Произошла ошибка!');
-        }
+        const newLogs = await response.json();
+
+        setLogs(newLogs);
     }
+
+    useEffect(() => {
+        setLogTable(<div>
+                        <LogTable logs={logs}/>
+                    </div>);
+    });
     
     return(
     <>
         <div>
             <button id="backup-btn" onClick={onClickedHandler}>Make Backup Now</button>
         </div>
+        {logTable}
     </>
     );
 }
