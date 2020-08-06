@@ -29,10 +29,10 @@ export const LogTable: React.SFC<ILogProps> = (props) =>{
     return(
         <>
             <h1>Logs</h1>
-            {table}
             <div>
                 <button onClick={onClickedHandler}>Clear logs</button>
             </div>
+            {table}
         </>
     );
 }
