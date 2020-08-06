@@ -2,12 +2,12 @@ import React, { useState } from 'react'
 
 export default function MakeBackupButton(): JSX.Element{
     
-    let [successed, setSuccessed] = useState(false);
+    let [successed, setSuccessed] = useState(true);
 
     async function onClickedHandler(): Promise<void>{
-        const response = await fetch('backup');
+        const response: Response = await fetch('backup');
 
-        setSuccessed(response.bodyUsed);
+        setSuccessed(response.json() as unknown as boolean);
         
         if(successed)
         {
