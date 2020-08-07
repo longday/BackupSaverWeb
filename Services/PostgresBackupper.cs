@@ -200,7 +200,7 @@ namespace WebUI.Services
 
             foreach (var db in databases)
             {
-                strBuilder.Append(db + " ");
+                strBuilder.Append(db + ",");
             }
 
             return strBuilder.ToString();
