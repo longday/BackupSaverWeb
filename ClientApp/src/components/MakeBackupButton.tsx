@@ -1,15 +1,17 @@
 import React, { useState } from 'react'
 import {LogTable} from './LogTable';
+import {ILog } from './LogTable'
 import './MakeBackupButton.css'
+import { Log } from '../Log';
 
 export default function MakeBackupButton(): JSX.Element{
     
-    let [logs, setLogs] = useState([""]);
+    let [logs, setLogs] = useState([new Log(new Date(), "")]);
 
     async function onMakeBackupClickedHandler(): Promise<void>{
         const response: Response = await fetch('backup');
 
-        const newLogs = await response.json();
+        const newLogs = await response.json() as ILog[];
 
         setLogs(newLogs);
 
