@@ -4,7 +4,7 @@ interface ILogProps{
     logs: string[];
 }
 
-export const LogTable: React.SFC<ILogProps> = (props) =>{
+export const LogTable: React.FunctionComponent<ILogProps> = (props) =>{
 
     return(
         <>
