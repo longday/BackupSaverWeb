@@ -23,7 +23,7 @@ namespace WebUI.Extensions
 
             var config = new PostgresBackupperConfig(host, port, username, password);
 
-            services.AddScoped<IAsyncBackupper>(sp => new PostgresBackupper(dbList, config, new ConsoleDiagnosticLogger(SentryLevel.Info)));
+            services.AddSingleton<IAsyncBackupper>(sp => new PostgresBackupper(dbList, config, new ConsoleDiagnosticLogger(SentryLevel.Info)));
 
             string bucket = environmentVariables["BUCKET"] as string;
             string s3ConnectionString = environmentVariables["S3_CONNECTION_STRING"] as string;
@@ -39,13 +39,13 @@ namespace WebUI.Extensions
             var credentials = new BasicAWSCredentials(accessKey, secretKey);
             var client = new AmazonS3Client(credentials, amazonConfig);
 
-            services.AddScoped<IAsyncRemover>(sp => new S3ObjectRemover(client, bucket));
-            services.AddScoped<IAsyncSaver>(sp => new S3StorageSaver(client, bucket, new ConsoleDiagnosticLogger(SentryLevel.Info)));
+            services.AddSingleton<IAsyncRemover>(sp => new S3ObjectRemover(client, bucket));
+            services.AddSingleton<IAsyncSaver>(sp => new S3StorageSaver(client, bucket, new ConsoleDiagnosticLogger(SentryLevel.Info)));
 
             string telegramConnectionString = environmentVariables["TELEGRAM_CONNECTION_STRING"] as string;
 
-            services.AddScoped<IAsyncReporter>(sp => new TelegramReporter(telegramConnectionString, new ConsoleDiagnosticLogger(SentryLevel.Info)));
-            services.AddScoped<BackupSaver>();
+            services.AddSingleton<IAsyncReporter>(sp => new TelegramReporter(telegramConnectionString, new ConsoleDiagnosticLogger(SentryLevel.Info)));
+            services.AddSingleton<BackupSaver>();
         }
     }
 }
