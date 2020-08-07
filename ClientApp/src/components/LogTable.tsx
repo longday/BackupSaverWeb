@@ -1,7 +1,12 @@
 import React from "react";
 
+export interface ILog{
+    date: Date;
+    message: string;
+}
+
 interface ILogProps{
-    logs: string[];
+    logs: ILog[];
 }
 
 export const LogTable: React.FunctionComponent<ILogProps> = (props) =>{
@@ -10,7 +15,7 @@ export const LogTable: React.FunctionComponent<ILogProps> = (props) =>{
         <>
             <table>
                 <tbody>
-                    {props.logs.map(log => <tr>{log}</tr>)}
+    {               props.logs.map(log => <tr>{log.message}</tr>)}
                 </tbody>
             </table>
         </>
