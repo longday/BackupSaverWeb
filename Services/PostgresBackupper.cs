@@ -202,7 +202,7 @@ namespace WebUI.Services
             {
                 if(i == databases.Length - 1)
                 {
-                    strBuilder.Append(databases[i] + $".");
+                    strBuilder.Append(databases[i] + $" ");
                     break;
                 }
 
