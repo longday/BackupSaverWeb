@@ -60,9 +60,9 @@ namespace WebUI.Services
             await Client.PutObjectAsync(putBackupFileRequest);
             
             Logs.Add($"{DateTime.Now}: Successfully saved {Path.GetFileNameWithoutExtension(source)}." +
-                     $"Weight: {new FileInfo(source).Length}");
+                     $"Weight: {new FileInfo(source).Length} Bytes");
             _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully saved {Path.GetFileNameWithoutExtension(source)}." +
-                                          $"Weight: {new FileInfo(source).Length}");
+                                          $"Weight: {new FileInfo(source).Length} Bytes");
         }
 
         private async Task CreateDirectoryHierarchyAsync()
