@@ -5,7 +5,7 @@ export default function MakeBackupButton(): JSX.Element{
     
     let [logs, setLogs] = useState([""]);
 
-    async function onClickedHandler(): Promise<void>{
+    async function onMakeBackupClickedHandler(): Promise<void>{
         const response: Response = await fetch('backup');
 
         const newLogs = await response.json();
@@ -21,11 +21,19 @@ export default function MakeBackupButton(): JSX.Element{
             alert('Приложение завершило работу с ошибкой')
         }
     }
+
+    function onClearLogsClickedHandler() : void{
+        setLogs([""])
+    }
     
     return(
     <>
         <div>
-            <button id="backup-btn" onClick={onClickedHandler}>Make Backup Now</button>
+            <button onClick={onMakeBackupClickedHandler}>Make Backup Now</button>
+        </div>
+        <h1>Logs</h1>
+        <div>
+            <button onClick={onClearLogsClickedHandler}>Clear Logs</button>
         </div>
         <div>
             <LogTable logs={logs}/>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 
 interface ILogProps{
     logs: string[];
@@ -6,33 +6,13 @@ interface ILogProps{
 
 export const LogTable: React.SFC<ILogProps> = (props) =>{
 
-    let [table, setTable] = useState(<table>
-                                        <tbody>
-                                            {props.logs.map(log => <tr>{log}</tr>)}
-                                        </tbody>
-                                    </table>);
-
-    const onClickedHandler = () =>{
-        const clearedTable = <table></table>
-        
-        setTable(clearedTable);
-    }
-
-    useEffect(() => {
-        setTable(<table>
-            <tbody>
-                {props.logs.map(log => <tr>{log}</tr>)}
-            </tbody>
-        </table>);
-    }, [table]);
-    
     return(
         <>
-            <h1>Logs</h1>
-            <div>
-                <button onClick={onClickedHandler}>Clear logs</button>
-            </div>
-            {table}
+            <table>
+                <tbody>
+                    {props.logs.map(log => <tr>{log}</tr>)}
+                </tbody>
+            </table>
         </>
     );
 }
