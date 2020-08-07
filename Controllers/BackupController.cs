@@ -29,8 +29,8 @@ namespace WebUI.Controllers
         {
             string sentryConnectionString = Environment.GetEnvironmentVariable("SENTRY_CONNECTION_STRING");
 
-            _logs.Add("Start pg_dump...");
-            _logger.LogInformation("Start pg_dump...");
+            _logs.Add($"{DateTime.Now}: Start pg_dump...");
+            _logger.LogInformation($"{DateTime.Now}: Start pg_dump...");
 
             using(SentrySdk.Init(sentryConnectionString))
             {
@@ -47,8 +47,8 @@ namespace WebUI.Controllers
                 catch(Exception ex)
                 {
                     SentrySdk.CaptureException(ex);
-                    _logs.Add("BackupSaver completed work with error!");
-                    _logger.LogError("BackupSaver completed work with error!");
+                    _logs.Add($"{DateTime.Now}: BackupSaver completed work with error!");
+                    _logger.LogError($"{DateTime.Now}: BackupSaver completed work with error!");
 
                     await Task.FromException<Exception>(ex);
 
@@ -56,8 +56,8 @@ namespace WebUI.Controllers
                 }
             }
 
-            _logs.Add("Successfully");
-            _logger.LogInformation("Successfully");
+            _logs.Add($"{DateTime.Now}: Successfully");
+            _logger.LogInformation($"{DateTime.Now}: Successfully");
 
             return _logs.Count > 0 ? _logs.Take(500).ToArray() : new string[]{"No logs"};
 

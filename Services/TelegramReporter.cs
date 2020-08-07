@@ -38,13 +38,13 @@ namespace WebUI.Services
             if (string.IsNullOrWhiteSpace(message))
                 throw new ArgumentNullException(nameof(message));
 
-            Logs.Add($"Sending message to {ConnectionString}....");
-            _logger.Log(SentryLevel.Info, $"Sending message to {ConnectionString}....");
+            Logs.Add($"{DateTime.Now}: Sending message to {ConnectionString}....");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Sending message to {ConnectionString}....");
             
             await Client.PostAsync(ConnectionString, new StringContent("{\"text\":\"BackupSaver: " + message + "\"}"));
             
-            Logs.Add("Successfully...");
-            _logger.Log(SentryLevel.Info, "Successfully...");
+            Logs.Add($"{DateTime.Now}: Successfully...");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully...");
         }
     }
 }

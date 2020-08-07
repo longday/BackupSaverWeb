@@ -36,79 +36,79 @@ namespace WebUI.Services
             if (string.IsNullOrEmpty(source))
                 throw new ArgumentNullException(nameof(source));
             
-            Logs.Add("Creating directory hierarchy...");
-            _logger.Log(SentryLevel.Info, "Creating directory hierarchy...");
+            Logs.Add($"{DateTime.Now}: Creating directory hierarchy...");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Creating directory hierarchy...");
             
             await CreateDirectoryHierarchyAsync();
             
-            Logs.Add("Successfully...");
-            _logger.Log(SentryLevel.Info, "Successfully...");
+            Logs.Add($"{DateTime.Now}: Successfully...");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully...");
 
-            Logs.Add("Constructing putBackupFileRequest....");
-            _logger.Log(SentryLevel.Info, "Constructing putBackupFileRequest....");
+            Logs.Add($"{DateTime.Now}: Constructing putBackupFileRequest....");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Constructing putBackupFileRequest....");
 
             var putBackupFileRequest = ConstructPutObjectRequest(Bucket,
                 $"{DateTime.Now.Year}" + "/" + $"{DateTime.Now.Month}" + "/" + $"{DateTime.Now.Day}" + "/" +
                 Path.GetFileNameWithoutExtension(source), source);
 
-            Logs.Add("Successfully");
-            _logger.Log(SentryLevel.Info, "Successfully");
+            Logs.Add($"{DateTime.Now}: Successfully");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully");
 
-            Logs.Add($"Upload {Path.GetFileNameWithoutExtension(source)}...");
-            _logger.Log(SentryLevel.Info, $"Upload {Path.GetFileNameWithoutExtension(source)}...");
+            Logs.Add($"{DateTime.Now}: Upload {Path.GetFileNameWithoutExtension(source)}...");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Upload {Path.GetFileNameWithoutExtension(source)}...");
             
             await Client.PutObjectAsync(putBackupFileRequest);
             
-            Logs.Add("Successfully");
-            _logger.Log(SentryLevel.Info, "Successfully");
+            Logs.Add($"{DateTime.Now}: Successfully");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully");
         }
 
         private async Task CreateDirectoryHierarchyAsync()
         {
-            Logs.Add("Constructing putYearFolderRequest...");
-            _logger.Log(SentryLevel.Info, "Constructing putYearFolderRequest...");
+            Logs.Add($"{DateTime.Now}: Constructing putYearFolderRequest...");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Constructing putYearFolderRequest...");
             var putYearFolderRequest = ConstructPutObjectRequest(Bucket, $"{DateTime.Now.Year}" + "/");
             
-            Logs.Add("Successfully");
-            _logger.Log(SentryLevel.Info, "Successfully");
+            Logs.Add($"{DateTime.Now}: Successfully");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully");
 
-            Logs.Add("Creating year folder");
-            _logger.Log(SentryLevel.Info, "Creating year folder");
+            Logs.Add($"{DateTime.Now}: Creating year folder");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Creating year folder");
             
             await Client.PutObjectAsync(putYearFolderRequest);
             
-            Logs.Add("Successfully");
-            _logger.Log(SentryLevel.Info, "Successfully");
-            Logs.Add("Constructing putMonthFolderRequest...");
-            _logger.Log(SentryLevel.Info, "Constructing putMonthFolderRequest...");
+            Logs.Add($"{DateTime.Now}: Successfully");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully");
+            Logs.Add($"{DateTime.Now}: Constructing putMonthFolderRequest...");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Constructing putMonthFolderRequest...");
             
             var putMonthFolderRequest =
                 ConstructPutObjectRequest(Bucket, $"{DateTime.Now.Year}" + "/" + $"{DateTime.Now.Month}" + "/");
             
-            Logs.Add("Successfully");
-            _logger.Log(SentryLevel.Info, "Successfully");
-            Logs.Add("Creating month folder...");
-            _logger.Log(SentryLevel.Info, "Creating month folder...");
+            Logs.Add($"{DateTime.Now}: Successfully");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully");
+            Logs.Add($"{DateTime.Now}: Creating month folder...");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Creating month folder...");
             
             await Client.PutObjectAsync(putMonthFolderRequest);
 
-            Logs.Add("Successfully");
-            _logger.Log(SentryLevel.Info, "Successfully");
-            Logs.Add("Constructing putDayFolderRequest...");
-            _logger.Log(SentryLevel.Info, "Constructing putDayFolderRequest...");
+            Logs.Add($"{DateTime.Now}: Successfully");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully");
+            Logs.Add($"{DateTime.Now}: Constructing putDayFolderRequest...");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Constructing putDayFolderRequest...");
             
             var putDayFolderRequest = ConstructPutObjectRequest(Bucket,
                 $"{DateTime.Now.Year}" + "/" + $"{DateTime.Now.Month}" + "/" + $"{DateTime.Now.Day}" + "/");
             
-            Logs.Add("Successfully");
-            _logger.Log(SentryLevel.Info, "Successfully");
-            Logs.Add("Creating day folder...");
-            _logger.Log(SentryLevel.Info, "Creating day folder...");
+            Logs.Add($"{DateTime.Now}: Successfully");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully");
+            Logs.Add($"{DateTime.Now}: Creating day folder...");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Creating day folder...");
             
             await Client.PutObjectAsync(putDayFolderRequest);
 
-            Logs.Add("Successfully");
-            _logger.Log(SentryLevel.Info, "Successfully");
+            Logs.Add($"{DateTime.Now}: Successfully");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully");
         }
 
         private static PutObjectRequest ConstructPutObjectRequest(string bucket, string key)

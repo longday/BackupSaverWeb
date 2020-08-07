@@ -35,11 +35,11 @@ namespace WebUI.Services
         {
             Environment.SetEnvironmentVariable("PGPASSWORD", Config.Password);
             
-            Logs.Add("Set PGPASSWORD...");
-            _logger.Log(SentryLevel.Info, "Set PGPASSWORD...");
+            Logs.Add($"{DateTime.Now}: Set PGPASSWORD...");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Set PGPASSWORD...");
 
-            Logs.Add("Successfully...");
-            _logger.Log(SentryLevel.Info, "Successfully...");
+            Logs.Add($"{DateTime.Now}: Successfully...");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully...");
             
             string outFilePath = Path.Combine(
                 Path.GetTempPath(),
@@ -50,32 +50,32 @@ namespace WebUI.Services
             
             string[] databases = DbList.Split(',', StringSplitOptions.RemoveEmptyEntries);
             
-            Logs.Add("Creating sql files....");
-            _logger.Log(SentryLevel.Info, "Creating sql files....");
+            Logs.Add($"{DateTime.Now}: Creating sql files....");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Creating sql files....");
 
             await CreateSqlFilesAsync(databases, outFilePath, Config)
                 .ConfigureAwait(false);
             
-            Logs.Add("Successfully...");
-            _logger.Log(SentryLevel.Info, "Successfully...");
+            Logs.Add($"{DateTime.Now}: Successfully...");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully...");
 
-            Logs.Add("Creating result archive....");
-            _logger.Log(SentryLevel.Info, "Creating result archive....");
+            Logs.Add($"{DateTime.Now}: Creating result archive....");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Creating result archive....");
 
             string archivePath = await CreateArchiveAsync(outFilePath, $"{DateTime.Now:yyyy-dd-M--HH-mm-ss}")
                 .ConfigureAwait(false);
             
-            Logs.Add("Successfully...");
-            _logger.Log(SentryLevel.Info, "Successfully...");
+            Logs.Add($"{DateTime.Now}: Successfully...");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully...");
 
-            Logs.Add($"Removing intermediate folder {Path.GetFileNameWithoutExtension(outFilePath)}...");
-            _logger.Log(SentryLevel.Info, $"Removing intermediate folder {Path.GetFileNameWithoutExtension(outFilePath)}...");
+            Logs.Add($"{DateTime.Now}: Removing intermediate folder {Path.GetFileNameWithoutExtension(outFilePath)}...");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Removing intermediate folder {Path.GetFileNameWithoutExtension(outFilePath)}...");
             
             if(Directory.Exists(outFilePath))
                 Directory.Delete(outFilePath, true);
 
-            Logs.Add("Successfully...");
-            _logger.Log(SentryLevel.Info, "Successfully");
+            Logs.Add($"{DateTime.Now}: Successfully...");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully");
             
             return archivePath;
         }
