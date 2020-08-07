@@ -41,8 +41,8 @@ namespace WebUI.Services
             
             await CreateDirectoryHierarchyAsync();
             
-            Logs.Add($"{DateTime.Now}: Successfully...");
-            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully...");
+            Logs.Add($"{DateTime.Now}: Successfully creating directory hierarchy in AmazonS3...");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully creating directory hierarchy in AmazonS3...");
 
             Logs.Add($"{DateTime.Now}: Constructing putBackupFileRequest....");
             _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Constructing putBackupFileRequest....");
@@ -59,8 +59,10 @@ namespace WebUI.Services
             
             await Client.PutObjectAsync(putBackupFileRequest);
             
-            Logs.Add($"{DateTime.Now}: Successfully");
-            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully");
+            Logs.Add($"{DateTime.Now}: Successfully saved {Path.GetFileNameWithoutExtension(source)}." +
+                     $"Weight: {new FileInfo(source).Length}");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully saved {Path.GetFileNameWithoutExtension(source)}." +
+                                          $"Weight: {new FileInfo(source).Length}");
         }
 
         private async Task CreateDirectoryHierarchyAsync()
