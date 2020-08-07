@@ -10,6 +10,7 @@ using Sentry.Protocol;
 using WebUI.Services.Interfaces;
 using System.Text;
 
+
 namespace WebUI.Services
 {
     /// <summary>
@@ -19,7 +20,7 @@ namespace WebUI.Services
     {
         public PostgresBackupperConfig Config { get; set; }
 
-        public List<string> Logs{ get; }
+        public List<Log> Logs{ get; }
         
         public string DbList { get; set; }
         
@@ -30,17 +31,17 @@ namespace WebUI.Services
             Config = config ?? throw new ArgumentNullException(nameof(config));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             DbList = dbList ?? throw new ArgumentNullException(nameof(dbList));
-            Logs = new List<string>();
+            Logs = new List<Log>();
         }
 
         public async Task<string> MakeBackupAsync()
         {
             Environment.SetEnvironmentVariable("PGPASSWORD", Config.Password);
             
-            Logs.Add($"{DateTime.Now}: Set PGPASSWORD...");
+            Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: Set PGPASSWORD..."));
             _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Set PGPASSWORD...");
 
-            Logs.Add($"{DateTime.Now}: Successfully...");
+            Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: Successfully..."));
             _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully...");
             
             string outFilePath = Path.Combine(
@@ -52,32 +53,32 @@ namespace WebUI.Services
             
             string[] databases = DbList.Split(',', StringSplitOptions.RemoveEmptyEntries);
             
-            Logs.Add($"{DateTime.Now}: Creating sql files....");
+            Logs.Add(DateTime.Now, new Log($"{DateTime.Now}: Creating sql files...."));
             _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Creating sql files....");
 
             await CreateSqlFilesAsync(databases, outFilePath, Config)
                 .ConfigureAwait(false);
             
-            Logs.Add($"{DateTime.Now}: Successfully...");
+            Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: Successfully..."));
             _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully...");
 
-            Logs.Add($"{DateTime.Now}: Creating result archive....");
+            Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: Creating result archive...."));
             _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Creating result archive....");
 
             string archivePath = await CreateArchiveAsync(outFilePath, $"{DateTime.Now:yyyy-dd-M--HH-mm-ss}")
                 .ConfigureAwait(false);
             
-            Logs.Add($"{DateTime.Now}: Successfully created {Path.GetFileNameWithoutExtension(archivePath)} archive...");
+            Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: Successfully created {Path.GetFileNameWithoutExtension(archivePath)} archive..."));
             _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully created {Path.GetFileNameWithoutExtension(archivePath)} archive...");
 
-            Logs.Add($"{DateTime.Now}: Removing intermediate folder {Path.GetFileNameWithoutExtension(outFilePath)}...");
+            Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: Removing intermediate folder {Path.GetFileNameWithoutExtension(outFilePath)}..."));
             _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Removing intermediate folder {Path.GetFileNameWithoutExtension(outFilePath)}...");
             
             if(Directory.Exists(outFilePath))
                 Directory.Delete(outFilePath, true);
 
-            Logs.Add($"{DateTime.Now}: The backups {GetDbListString()} were successfully archived and compressed." +
-                        $"Archive weight: {new FileInfo(archivePath).Length} Bytes");
+            Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: The backups {GetDbListString()} were successfully archived and compressed." +
+                        $"Archive weight: {new FileInfo(archivePath).Length} Bytes"));
             _logger.Log(SentryLevel.Info, $"{DateTime.Now}: The backups {GetDbListString()} were successfully archived and compressed." +
                         $"Archive weight: {new FileInfo(archivePath).Length} Bytes");
             

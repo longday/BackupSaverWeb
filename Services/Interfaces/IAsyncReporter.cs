@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using WebUI.Services;
 
 namespace WebUI.Services.Interfaces
 {   
@@ -10,7 +11,7 @@ namespace WebUI.Services.Interfaces
     {
         string ConnectionString { get; set; }
 
-        List<string> Logs{ get; }
+        List<Log> Logs{ get; }
         
         Task ReportAsync(string message);
     }

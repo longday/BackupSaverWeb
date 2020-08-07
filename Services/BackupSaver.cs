@@ -14,7 +14,7 @@ namespace WebUI.Services
         private readonly IAsyncRemover _remover;
         private readonly IAsyncSaver _saver;
         private readonly IAsyncReporter _reporter;
-        public List<string> Logs{ get; }
+        public List<Log> Logs{ get; }
 
         public BackupSaver(IAsyncBackupper backupper, IAsyncRemover remover, 
                        IAsyncSaver saver, IAsyncReporter reporter)
@@ -23,7 +23,7 @@ namespace WebUI.Services
             _remover = remover ?? throw new ArgumentNullException(nameof(remover));
             _saver = saver ?? throw new ArgumentNullException(nameof(saver));
             _reporter = reporter ?? throw new ArgumentNullException(nameof(reporter));
-            Logs = new List<string>();
+            Logs = new List<Log>();
         }
 
         public async Task MakeBackupsAsync(int quantity, string message)

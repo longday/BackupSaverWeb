@@ -15,7 +15,7 @@ namespace WebUI.Services
     {
         public string ConnectionString { get; set; }
 
-        public List<string> Logs{ get; }
+        public List<Log> Logs{ get; }
         
         private readonly IDiagnosticLogger _logger;
         
@@ -30,7 +30,7 @@ namespace WebUI.Services
         {
             ConnectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            Logs = new List<string>();
+            Logs = new List<Log>();
         }
 
         public async Task ReportAsync(string message)
@@ -38,12 +38,12 @@ namespace WebUI.Services
             if (string.IsNullOrWhiteSpace(message))
                 throw new ArgumentNullException(nameof(message));
 
-            Logs.Add($"{DateTime.Now}: Sending message to {ConnectionString}....");
+            Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: Sending message to {ConnectionString}...."));
             _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Sending message to {ConnectionString}....");
             
             await Client.PostAsync(ConnectionString, new StringContent("{\"text\":\"BackupSaver: " + message + "\"}"));
             
-            Logs.Add($"{DateTime.Now}: Successfully...");
+            Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: Successfully..."));
             _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully...");
         }
     }

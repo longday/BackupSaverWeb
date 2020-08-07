@@ -15,13 +15,13 @@ namespace WebUI.Controllers
     {
         private readonly ILogger<BackupController> _logger;
         private readonly BackupSaver _backupSaver;
-        private readonly List<string> _logs;
+        private readonly List<Log> _logs;
 
         public BackupController(ILogger<BackupController> logger, BackupSaver backupSaver)
         {
             _logger = logger;
             _backupSaver = backupSaver;
-            _logs = new List<string>();
+            _logs = new List<Log>();
         }
 
         [HttpGet]
@@ -29,7 +29,7 @@ namespace WebUI.Controllers
         {
             string sentryConnectionString = Environment.GetEnvironmentVariable("SENTRY_CONNECTION_STRING");
 
-            _logs.Add($"{DateTime.Now}: Start pg_dump...");
+            _logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: Start pg_dump..."));
             _logger.LogInformation($"{DateTime.Now}: Start pg_dump...");
 
             using(SentrySdk.Init(sentryConnectionString))
@@ -48,17 +48,17 @@ namespace WebUI.Controllers
                 catch(Exception ex)
                 {
                     SentrySdk.CaptureException(ex);
-                    _logs.Add($"{DateTime.Now}: BackupSaver completed work with error! {ex.Message}");
+                    _logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: BackupSaver completed work with error! {ex.Message}"));
                     _logger.LogError($"{DateTime.Now}: BackupSaver completed work with error! {ex.Message}");
 
-                    return _logs.Take(500).ToArray();
+                     return _logs.OrderByDescending(log => log.Date).Take(500).ToArray();
                 }
             }
 
-            _logs.Add($"{DateTime.Now}: BackupSaver successfully completed work...");
+            _logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: BackupSaver successfully completed work..."));
             _logger.LogInformation($"{DateTime.Now}: BackupSaver successfully completed work...");
 
-            return _logs.Count > 0 ? _logs.Take(500).ToArray() : new string[]{"No logs"};
+            return _logs.OrderByDescending(log => log.Date).Take(500).ToArray();
 
         }
     }
