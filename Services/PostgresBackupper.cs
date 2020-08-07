@@ -200,7 +200,7 @@ namespace WebUI.Services
 
             for (int i = 0; i < databases.Length; i++)
             {
-                if(i == databases.Length)
+                if(i == databases.Length - 1)
                 {
                     strBuilder.Append(databases[i] + $".");
                     break;
