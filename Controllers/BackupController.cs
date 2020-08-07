@@ -51,14 +51,14 @@ namespace WebUI.Controllers
                     _logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: BackupSaver completed work with error! {ex.Message}"));
                     _logger.LogError($"{DateTime.Now}: BackupSaver completed work with error! {ex.Message}");
 
-                     return _logs.OrderBy(log => log.Date).Take(500).ToArray();
+                     return _logs.OrderBy(log => log.Date).Reverse().Take(500).ToArray();
                 }
             }
 
             _logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: BackupSaver successfully completed work..."));
             _logger.LogInformation($"{DateTime.Now}: BackupSaver successfully completed work...");
 
-            return _logs.OrderBy(log => log.Date).Take(500).ToArray();
+            return _logs.OrderBy(log => log.Date).Reverse().Take(500).ToArray();
 
         }
     }
