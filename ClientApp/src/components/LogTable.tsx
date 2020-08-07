@@ -15,7 +15,7 @@ export const LogTable: React.FunctionComponent<ILogProps> = (props) =>{
         <>
             <table>
                 <tbody>
-    {               props.logs.map(log => <tr>{log.message}</tr>)}
+                    {props.logs.map(log => <tr>{log.message}</tr>)}
                 </tbody>
             </table>
         </>
