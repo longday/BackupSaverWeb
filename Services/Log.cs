@@ -3,8 +3,8 @@ using System;
 
 namespace WebUI.Services
 {
-        public class Log
-        {
+    public class Log
+    {
         public DateTime Date{ get; }
 
         public string Message{ get; }
