@@ -47,10 +47,8 @@ namespace WebUI.Controllers
                 catch(Exception ex)
                 {
                     SentrySdk.CaptureException(ex);
-                    _logs.Add($"{DateTime.Now}: BackupSaver completed work with error!");
-                    _logger.LogError($"{DateTime.Now}: BackupSaver completed work with error!");
-
-                    await Task.FromException<Exception>(ex);
+                    _logs.Add($"{DateTime.Now}: BackupSaver completed work with error! {ex.Message}");
+                    _logger.LogError($"{DateTime.Now}: BackupSaver completed work with error! {ex.Message}");
 
                     return _logs.Take(500).ToArray();
                 }
