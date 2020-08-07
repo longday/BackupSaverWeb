@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import {LogTable} from './LogTable';
+import './MakeBackupButton.css'
 
 export default function MakeBackupButton(): JSX.Element{
     
@@ -28,7 +29,7 @@ export default function MakeBackupButton(): JSX.Element{
             <button onClick={onMakeBackupClickedHandler}>Make Backup Now</button>
         </div>
         <h1>Logs</h1>
-        <div>
+        <div className="logTableDiv">
             <LogTable logs={logs}/>
         </div>
     </>
