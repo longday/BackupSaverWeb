@@ -1,12 +1,14 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Sentry.Extensibility;
 using Sentry.Protocol;
 using WebUI.Services.Interfaces;
+using System.Text;
 
 namespace WebUI.Services
 {
@@ -65,8 +67,8 @@ namespace WebUI.Services
             string archivePath = await CreateArchiveAsync(outFilePath, $"{DateTime.Now:yyyy-dd-M--HH-mm-ss}")
                 .ConfigureAwait(false);
             
-            Logs.Add($"{DateTime.Now}: Successfully...");
-            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully...");
+            Logs.Add($"{DateTime.Now}: Successfully created {Path.GetFileNameWithoutExtension(archivePath)} archive...");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully created {Path.GetFileNameWithoutExtension(archivePath)} archive...");
 
             Logs.Add($"{DateTime.Now}: Removing intermediate folder {Path.GetFileNameWithoutExtension(outFilePath)}...");
             _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Removing intermediate folder {Path.GetFileNameWithoutExtension(outFilePath)}...");
@@ -74,8 +76,10 @@ namespace WebUI.Services
             if(Directory.Exists(outFilePath))
                 Directory.Delete(outFilePath, true);
 
-            Logs.Add($"{DateTime.Now}: Successfully...");
-            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully");
+            Logs.Add($"{DateTime.Now}: The backups {GetDbListString()} were successfully archived and compressed." +
+                        $"Archive weight: {new FileInfo(archivePath).Length} Bytes");
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: The backups {databases} were successfully archived and compressed." +
+                        $"Archive weight: {new FileInfo(archivePath).Length} Bytes");
             
             return archivePath;
         }
@@ -186,6 +190,20 @@ namespace WebUI.Services
                 throw new ArgumentNullException(nameof(path));
 
             return File.ReadAllLines(path).Length <= 1;
+        }
+
+        private string GetDbListString()
+        {
+            string[] databases = DbList.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+            StringBuilder strBuilder = new StringBuilder();
+
+            foreach (var db in databases)
+            {
+                strBuilder.Append(db + " ");
+            }
+
+            return strBuilder.ToString();
         }
     }
 }
