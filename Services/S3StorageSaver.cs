@@ -36,7 +36,7 @@ namespace WebUI.Services
             if (string.IsNullOrEmpty(source))
                 throw new ArgumentNullException(nameof(source));
             
-            Logs.Add($"{DateTime.Now}: Creating directory hierarchy...");
+            Logs.Add($"{DateTime.Now}: Creating directory hierarchy in AmazonS3...");
             _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Creating directory hierarchy...");
             
             await CreateDirectoryHierarchyAsync();
