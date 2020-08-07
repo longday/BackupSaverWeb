@@ -78,7 +78,7 @@ namespace WebUI.Services
 
             Logs.Add($"{DateTime.Now}: The backups {GetDbListString()} were successfully archived and compressed." +
                         $"Archive weight: {new FileInfo(archivePath).Length} Bytes");
-            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: The backups {databases} were successfully archived and compressed." +
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: The backups {GetDbListString()} were successfully archived and compressed." +
                         $"Archive weight: {new FileInfo(archivePath).Length} Bytes");
             
             return archivePath;
