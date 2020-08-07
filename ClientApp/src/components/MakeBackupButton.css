@@ -1,4 +1,6 @@
-.logTableDiv
+div.logTableDiv
 {
-    overflow-y: scroll;
+    width: 90%;
+    overflow: auto;
+    height: 550px;
 }
