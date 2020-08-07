@@ -22,19 +22,12 @@ export default function MakeBackupButton(): JSX.Element{
         }
     }
 
-    function onClearLogsClickedHandler() : void{
-        setLogs([""])
-    }
-    
     return(
     <>
         <div>
             <button onClick={onMakeBackupClickedHandler}>Make Backup Now</button>
         </div>
         <h1>Logs</h1>
-        <div>
-            <button onClick={onClearLogsClickedHandler}>Clear Logs</button>
-        </div>
         <div>
             <LogTable logs={logs}/>
         </div>
