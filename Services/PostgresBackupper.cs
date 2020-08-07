@@ -198,9 +198,15 @@ namespace WebUI.Services
 
             StringBuilder strBuilder = new StringBuilder();
 
-            foreach (var db in databases)
+            for (int i = 0; i < databases.Length; i++)
             {
-                strBuilder.Append(db + ",");
+                if(i == databases.Length)
+                {
+                    strBuilder.Append(databases[i] + $".");
+                    break;
+                }
+
+                strBuilder.Append(databases[i] + $",");
             }
 
             return strBuilder.ToString();
