@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using WebUI.Services;
 
 namespace WebUI.Services.Interfaces
 {
@@ -8,7 +9,7 @@ namespace WebUI.Services.Interfaces
     /// </summary>
     public interface IAsyncSaver
     {   
-        List<string> Logs{ get; }
+        List<Log> Logs{ get; }
 
         Task SaveAsync(string source);
     }
