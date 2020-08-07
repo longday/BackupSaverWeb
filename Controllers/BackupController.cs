@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using Sentry;
 using WebUI.Services;
+using System.Linq;
 
 namespace WebUI.Controllers
 {
@@ -51,14 +52,14 @@ namespace WebUI.Controllers
 
                     await Task.FromException<Exception>(ex);
 
-                    return _logs.ToArray();
+                    return _logs.ToArray().Take(500);
                 }
             }
 
             _logs.Add("Successfully");
             _logger.LogInformation("Successfully");
 
-            return _logs.Count > 0 ? _logs.ToArray() : new string[]{"No logs"};
+            return _logs.Count > 0 ? _logs.ToArray().Take(500) : new string[]{"No logs"};
 
         }
     }
