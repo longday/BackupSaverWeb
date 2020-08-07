@@ -53,7 +53,7 @@ namespace WebUI.Services
             
             string[] databases = DbList.Split(',', StringSplitOptions.RemoveEmptyEntries);
             
-            Logs.Add(DateTime.Now, new Log($"{DateTime.Now}: Creating sql files...."));
+            Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: Creating sql files...."));
             _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Creating sql files....");
 
             await CreateSqlFilesAsync(databases, outFilePath, Config)
