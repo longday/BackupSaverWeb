@@ -52,14 +52,14 @@ namespace WebUI.Controllers
 
                     await Task.FromException<Exception>(ex);
 
-                    return _logs.ToArray().Take(500);
+                    return _logs.Take(500).ToArray();
                 }
             }
 
             _logs.Add("Successfully");
             _logger.LogInformation("Successfully");
 
-            return _logs.Count > 0 ? _logs.ToArray().Take(500) : new string[]{"No logs"};
+            return _logs.Count > 0 ? _logs.Take(500).ToArray() : new string[]{"No logs"};
 
         }
     }
