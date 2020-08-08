@@ -11,7 +11,7 @@ export default function MakeBackupButton(): JSX.Element{
     async function onMakeBackupClickedHandler(): Promise<void>{
         const response: Response = await fetch('backup');
 
-        const newLogs = await response.json() as ILog[];
+        const newLogs : ILog[] = await response.json() as ILog[];
 
         setLogs(newLogs);
 
