@@ -33,11 +33,7 @@ namespace WebUI.Controllers
             {
                 try
                 {
-                    int backupDeletionPeriodInDays= int.Parse(Environment.GetEnvironmentVariable("FILE_DELETION_PERIOD_IN_DAYS") ?? throw new ArgumentNullException());
-                    string message = $"Items uploaded earlier than in the last {backupDeletionPeriodInDays} days have been removed." +
-                                        "Backups were archived and saved in AmazonS3...";
-
-                    await _backupSaver.MakeBackupsAsync(backupDeletionPeriodInDays, message);
+                    await _backupSaver.MakeBackupsAsync();
                 }
                 catch(Exception ex)
                 {
