@@ -26,19 +26,41 @@ namespace WebUI.Services
             Logs = new List<Log>();
         }
 
-        public async Task MakeBackupsAsync(int quantity, string message)
+        public async Task MakeBackupsAsync()
         {
-             string backupArchivePath = await _backupper.MakeBackupAsync();
+            Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: Start pg_dump..."));
+            try
+            {
+                string backupArchivePath = await _backupper.MakeBackupAsync();
 
-             Task removeTask = _remover.RemoveAsync(quantity);
-             Task saveTask = _saver.SaveAsync(backupArchivePath);
-             Task reportTask = _reporter.ReportAsync(message);
+                int backupDeletionPeriodInDays = int.Parse(Environment.GetEnvironmentVariable("FILE_DELETION_PERIOD_IN_DAYS") ?? throw new ArgumentNullException());
+                string message = $"Items uploaded earlier than in the last {backupDeletionPeriodInDays} days have been removed." +
+                                        "Backups were archived and saved in AmazonS3...";
 
-             await Task.WhenAll(removeTask, saveTask, reportTask);
+                Task removeTask = _remover.RemoveAsync(backupDeletionPeriodInDays);
+                Task saveTask = _saver.SaveAsync(backupArchivePath);
+                Task reportTask = _reporter.ReportAsync(message);
 
-             Logs.AddRange(_backupper.Logs);
-             Logs.AddRange(_saver.Logs);
-             Logs.AddRange(_reporter.Logs);
+                await Task.WhenAll(removeTask, saveTask, reportTask);
+
+                AddServicesLogs();
+
+            }
+            catch (Exception ex)
+            {
+                AddServicesLogs();
+                Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: BackupSaver completed work with error: {ex.Message}..."));
+                await Task.FromException<Exception>(ex);
+            }
+             
+             Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: BackupSaver successfully completed work..."));
+        }
+
+        private void AddServicesLogs()
+        {
+            Logs.AddRange(_backupper.Logs);
+            Logs.AddRange(_saver.Logs);
+            Logs.AddRange(_reporter.Logs);
         }
     }
 }
