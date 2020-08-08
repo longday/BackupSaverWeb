@@ -15,13 +15,11 @@ namespace WebUI.Controllers
     {
         private readonly ILogger<BackupController> _logger;
         private readonly BackupSaver _backupSaver;
-        private readonly List<Log> _logs;
 
         public BackupController(ILogger<BackupController> logger, BackupSaver backupSaver)
         {
             _logger = logger;
             _backupSaver = backupSaver;
-            _logs = new List<Log>();
         }
 
         [HttpGet]
@@ -29,7 +27,6 @@ namespace WebUI.Controllers
         {
             string sentryConnectionString = Environment.GetEnvironmentVariable("SENTRY_CONNECTION_STRING");
 
-            _logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: Start pg_dump..."));
             _logger.LogInformation($"{DateTime.Now}: Start pg_dump...");
 
             using(SentrySdk.Init(sentryConnectionString))
@@ -41,25 +38,19 @@ namespace WebUI.Controllers
                                         "Backups were archived and saved in AmazonS3...";
 
                     await _backupSaver.MakeBackupsAsync(backupDeletionPeriodInDays, message);
-
-                    _logs.AddRange(_backupSaver.Logs);
-        
                 }
                 catch(Exception ex)
                 {
                     SentrySdk.CaptureException(ex);
-                    _logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: BackupSaver completed work with error! {ex.Message}"));
                     _logger.LogError($"{DateTime.Now}: BackupSaver completed work with error! {ex.Message}");
 
-                     return _logs.OrderBy(log => log.Date).Reverse().Take(500).ToArray();
+                     return _backupSaver.Logs.OrderBy(log => log.Date).Reverse().Take(500).ToArray();
                 }
             }
 
-            _logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: BackupSaver successfully completed work..."));
             _logger.LogInformation($"{DateTime.Now}: BackupSaver successfully completed work...");
 
-            return _logs.OrderBy(log => log.Date).Reverse().Take(500).ToArray();
-
+            return _backupSaver.Logs.OrderBy(log => log.Date).Reverse().Take(500).ToArray();
         }
     }
 }
