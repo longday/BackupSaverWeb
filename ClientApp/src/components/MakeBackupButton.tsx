@@ -9,19 +9,18 @@ export default function MakeBackupButton(): JSX.Element{
     let [logs, setLogs] = useState([new Log(new Date(), "")]);
 
     async function onMakeBackupClickedHandler(): Promise<void>{
-        const response: Response = await fetch('backup');
+        
+        try {
+            const response: Response = await fetch('backup');
 
-        const newLogs : ILog[] = await response.json() as ILog[];
+            const newLogs : ILog[] = await response.json() as ILog[];
 
-        setLogs(newLogs);
+            setLogs(newLogs);
 
-        if(logs.length > 0)
-        {
             alert('Бэкапы были успешно созданы и сохранены');
-        }
-        else
-        {
-            alert('Приложение завершило работу с ошибкой')
+            
+        } catch (error) {
+            alert('Приложение завершило работу с ошибкой: ' + error);
         }
     }
 
