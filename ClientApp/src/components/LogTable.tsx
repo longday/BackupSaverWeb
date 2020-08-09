@@ -1,12 +1,8 @@
 import React from "react";
-
-export interface ILog{
-    date: Date;
-    message: string;
-}
+import { Log } from "../Log";
 
 interface ILogProps{
-    logs: ILog[];
+    logs: Log[];
 }
 
 export const LogTable: React.FunctionComponent<ILogProps> = (props) =>{

@@ -1,6 +1,5 @@
-import { ILog } from "./components/LogTable";
 
-export class Log implements ILog
+export class Log 
 {
     public date: Date;
     public message : string;
