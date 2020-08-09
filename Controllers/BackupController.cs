@@ -23,7 +23,7 @@ namespace WebUI.Controllers
         }
 
         [HttpGet]
-        public async Task<Log[]> MakeBackup()
+        public async Task<IEnumerable<Log>> MakeBackup()
         {
             string sentryConnectionString = Environment.GetEnvironmentVariable("SENTRY_CONNECTION_STRING");
 
@@ -40,13 +40,13 @@ namespace WebUI.Controllers
                     SentrySdk.CaptureException(ex);
                     _logger.LogError($"{DateTime.Now}: BackupSaver completed work with error! {ex.Message}");
 
-                     return _backupSaver.Logs.OrderBy(log => log.Date).Reverse().Take(500).ToArray();
+                     return _backupSaver.Logs;
                 }
             }
 
             _logger.LogInformation($"{DateTime.Now}: BackupSaver successfully completed work...");
 
-            return _backupSaver.Logs.OrderBy(log => log.Date).Reverse().Take(500).ToArray();
+            return _backupSaver.Logs;
         }
     }
 }
