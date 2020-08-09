@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import {LogTable} from './LogTable';
-import {ILog } from './LogTable'
 import './MakeBackupButton.css'
 import { Log } from '../Log';
 
@@ -13,7 +12,16 @@ export default function MakeBackupButton(): JSX.Element{
         try {
             const response: Response = await fetch('backup');
 
-            const newLogs : ILog[] = await response.json() as ILog[];
+            const data: Log[] = await response.json() as Log[];
+            let newLogs: Log[] = data.reverse();
+
+            if (logs.length > 1) {
+                let tmpData : Log[] = data.filter(item =>
+                    logs.every(log => log.date != item.date && log.message != item.message));
+                
+                newLogs = logs.concat(tmpData).sort((prevLog, currentLog) =>
+                    prevLog.date.valueOf() - currentLog.date.valueOf()).reverse();
+            }
 
             setLogs(newLogs);
 
