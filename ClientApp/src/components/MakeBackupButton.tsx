@@ -13,14 +13,14 @@ export default function MakeBackupButton(): JSX.Element{
             const response: Response = await fetch('backup');
 
             const data: Log[] = await response.json() as Log[];
-            let newLogs: Log[] = data.reverse();
+            let newLogs: Log[] = data;
 
             if (logs.length > 1) {
                 let tmpData : Log[] = data.filter(item =>
                     logs.every(log => log.date != item.date && log.message != item.message));
                 
-                newLogs = logs.concat(tmpData).sort((prevLog, currentLog) =>
-                    prevLog.date.valueOf() - currentLog.date.valueOf()).reverse();
+                newLogs = tmpData.concat(logs).sort((prevLog, currentLog) =>
+                    prevLog.date.valueOf() - currentLog.date.valueOf());
             }
 
             setLogs(newLogs);
