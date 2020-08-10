@@ -24,9 +24,6 @@ export default function MakeBackupButton(): JSX.Element{
             }
 
             setLogs(newLogs);
-
-            alert('Бэкапы были успешно созданы и сохранены');
-            
         } catch (error) {
             alert('Приложение завершило работу с ошибкой: ' + error);
         }
