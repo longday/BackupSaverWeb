@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using WebUI.Services.Interfaces;
 using System.Collections.Generic;
 using System;
+using Sentry;
 
 namespace WebUI.Services
 {
@@ -29,31 +30,37 @@ namespace WebUI.Services
         public async Task MakeBackupsAsync()
         {
             Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: Start pg_dump..."));
-            try
+
+            string sentryConnectionString = Environment.GetEnvironmentVariable("SENTRY_CONNECTION_STRING");
+
+            using(SentrySdk.Init(sentryConnectionString))
             {
-                string backupArchivePath = await _backupper.MakeBackupAsync();
+                try
+                {
+                    string backupArchivePath = await _backupper.MakeBackupAsync();
 
-                int backupDeletionPeriodInDays = int.Parse(Environment.GetEnvironmentVariable("FILE_DELETION_PERIOD_IN_DAYS") ?? throw new ArgumentNullException());
-                string message = $"Items uploaded earlier than in the last {backupDeletionPeriodInDays} days have been removed." +
-                                        "Backups were archived and saved in AmazonS3...";
+                    int backupDeletionPeriodInDays = int.Parse(Environment.GetEnvironmentVariable("FILE_DELETION_PERIOD_IN_DAYS") ?? throw new ArgumentNullException());
+                    string message = $"Items uploaded earlier than in the last {backupDeletionPeriodInDays} days have been removed." +
+                                            "Backups were archived and saved in AmazonS3...";
 
-                Task removeTask = _remover.RemoveAsync(backupDeletionPeriodInDays);
-                Task saveTask = _saver.SaveAsync(backupArchivePath);
-                Task reportTask = _reporter.ReportAsync(message);
+                    Task removeTask = _remover.RemoveAsync(backupDeletionPeriodInDays);
+                    Task saveTask = _saver.SaveAsync(backupArchivePath);
+                    Task reportTask = _reporter.ReportAsync(message);
 
-                await Task.WhenAll(removeTask, saveTask, reportTask);
+                    await Task.WhenAll(removeTask, saveTask, reportTask);
 
-                AddServicesLogs();
+                    AddServicesLogs();
 
-            }
-            catch (Exception ex)
-            {
-                AddServicesLogs();
-                Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: BackupSaver completed work with error: {ex.Message}..."));
-                await Task.FromException<Exception>(ex);
+                }
+                catch (Exception ex)
+                {
+                    AddServicesLogs();
+                    Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: BackupSaver completed work with error: {ex.Message}..."));
+                    SentrySdk.CaptureException(ex);
+                }
             }
              
-             Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: BackupSaver successfully completed work..."));
+            Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: BackupSaver successfully completed work..."));
         }
 
         private void AddServicesLogs()
