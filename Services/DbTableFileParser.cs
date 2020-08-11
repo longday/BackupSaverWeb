@@ -13,9 +13,6 @@ namespace WebUI.Services
             if(string.IsNullOrWhiteSpace(path))
                 throw new ArgumentNullException(nameof(path));
 
-            Array.ForEach(ignoredValues, iv => Console.WriteLine(iv));
-            Console.WriteLine();
-
             var lines = File.ReadAllLines(path)
                             .Skip(2)
                             .SkipLast(2)
