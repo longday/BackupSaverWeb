@@ -49,6 +49,9 @@ namespace WebUI.Services
                 $"{DateTime.Now:yyyy-dd-M--HH-mm-ss}");
             
             Directory.CreateDirectory(outFilePath);
+
+            if (!Directory.EnumerateFiles(outFilePath, "*.*", SearchOption.AllDirectories).Any())
+                throw new DirectoryIsEmptyException("Failed to make dumps. Check the connection");
             
             var databases = await GetDbListAsync();
 
