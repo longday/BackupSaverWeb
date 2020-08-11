@@ -2,14 +2,13 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Sentry.Extensibility;
 using Sentry.Protocol;
 using WebUI.Services.Interfaces;
 using System.Text;
-
+using WebUI.Extensions;
 
 namespace WebUI.Services
 {
@@ -22,15 +21,15 @@ namespace WebUI.Services
 
         public List<Log> Logs{ get; }
         
-        public string DbList { get; set; }
+        public string DbIgnore{ get; set; }
         
         private readonly IDiagnosticLogger _logger;
 
-        public PostgresBackupper(string dbList, PostgresBackupperConfig config, IDiagnosticLogger logger)
+        public PostgresBackupper(string dbIgnore, PostgresBackupperConfig config, IDiagnosticLogger logger)
         {
+            DbIgnore = dbIgnore ?? throw new ArgumentNullException(nameof(dbIgnore));
             Config = config ?? throw new ArgumentNullException(nameof(config));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            DbList = dbList ?? throw new ArgumentNullException(nameof(dbList));
             Logs = new List<Log>();
         }
 
@@ -51,8 +50,8 @@ namespace WebUI.Services
             
             Directory.CreateDirectory(outFilePath);
             
-            string[] databases = DbList.Split(',', StringSplitOptions.RemoveEmptyEntries);
-            
+            var databases = await GetDbListAsync();
+
             Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: Creating sql files...."));
             _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Creating sql files....");
 
@@ -77,9 +76,9 @@ namespace WebUI.Services
             if(Directory.Exists(outFilePath))
                 Directory.Delete(outFilePath, true);
 
-            Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: The backups {GetDbListString()} were successfully archived and compressed." +
+            Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: The backups {databases.ToFormatString()} were successfully archived and compressed." +
                         $"Archive weight: {new FileInfo(archivePath).Length} Bytes"));
-            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: The backups {GetDbListString()} were successfully archived and compressed." +
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: The backups {databases.ToFormatString()} were successfully archived and compressed." +
                         $"Archive weight: {new FileInfo(archivePath).Length} Bytes");
             
             return archivePath;
@@ -87,7 +86,7 @@ namespace WebUI.Services
 
         private static async Task CreateSqlFilesAsync(string[] databases, string outFilePath, PostgresBackupperConfig config)
         {
-            if (databases == null || databases.Length == 0) 
+            if (databases == null) 
                 throw new ArgumentNullException(nameof(databases));
             
             if (string.IsNullOrWhiteSpace(outFilePath))
@@ -129,32 +128,6 @@ namespace WebUI.Services
             return archivePath;
         }
         
-        private static ProcessStartInfo GetProcessInfoByOs(string batFilePath)
-        {
-            if(string.IsNullOrWhiteSpace(batFilePath))
-                throw new ArgumentNullException(nameof(batFilePath));
-            
-            ProcessStartInfo info;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                info = new ProcessStartInfo(batFilePath);
-            }
-            else
-            {
-                info = new ProcessStartInfo("sh")
-                {
-                    Arguments = $"{batFilePath}"
-                };
-            }
-
-            info.CreateNoWindow = true;
-            info.UseShellExecute = false;
-            info.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            info.RedirectStandardError = true;
-
-            return info;
-        }
-
         private static Task ExecuteCommandAsync(string command)
         {
             if(string.IsNullOrWhiteSpace(command))
@@ -163,14 +136,18 @@ namespace WebUI.Services
             return Task.Run(() =>
             {
                 string batFilePath = Path.Combine(Path.GetTempPath(),
-                    $"{Guid.NewGuid()}." + (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "bat" : "sh"));
+                    $"{Guid.NewGuid()}.sh");
 
                 string batchContent = string.Empty;
                 batchContent += $"{command}";
                 
                 File.WriteAllText(batFilePath, batchContent);
 
-                ProcessStartInfo processStartInfo = GetProcessInfoByOs(batFilePath);
+                ProcessStartInfo processStartInfo = new ProcessStartInfo("sh")
+                {
+                    Arguments = $"{batFilePath}"
+                };
+
                 Process process = Process.Start(processStartInfo);
 
                 if (process != null)
@@ -193,24 +170,27 @@ namespace WebUI.Services
             return File.ReadAllLines(path).Length <= 1;
         }
 
-        private string GetDbListString()
+        private async Task<string[]> GetDbListAsync()
         {
-            string[] databases = DbList.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            string[] ignoredDatabases = DbIgnore.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            
+            Environment.SetEnvironmentVariable("PGPASSWORD", Config.Password);
 
-            StringBuilder strBuilder = new StringBuilder();
+            string tmpFilePath = Path.Combine(Path.GetTempPath(), "db.txt");
+            string getDbListQuery = $"psql -h {Config.Host} -p {Config.Port} -U {Config.Username} -c" +
+                                    $"'SELECT datname FROM pg_database' > {tmpFilePath}";
 
-            for (int i = 0; i < databases.Length; i++)
-            {
-                if(i == databases.Length - 1)
-                {
-                    strBuilder.Append(databases[i] + $" ");
-                    break;
-                }
+            await ExecuteCommandAsync(getDbListQuery)
+                  .ConfigureAwait(false);
 
-                strBuilder.Append(databases[i] + $",");
-            }
+            var fileParser = new DbTableFileParser();
 
-            return strBuilder.ToString();
+            var databases = fileParser.GetParsedValues(tmpFilePath, ignoredDatabases);
+
+            if(File.Exists(tmpFilePath))
+                File.Delete(tmpFilePath);
+
+            return databases;
         }
     }
 }

@@ -10,8 +10,6 @@ namespace WebUI.Services.Interfaces
     public interface IAsyncBackupper
     {
         List<Log> Logs{ get; }
-
-        string DbList { get; set; }
         
         Task<string> MakeBackupAsync();
     }
