@@ -19,11 +19,11 @@ namespace WebUI.Extensions
             string port = environmentVariables["PORT"] as string;
             string username = environmentVariables["USER_NAME"] as string;
             string password = environmentVariables["PASSWORD"] as string;
-            string dbList = environmentVariables["DB_LIST"] as string;
+            string dbIgnore = environmentVariables["DB_IGNORE"] as string;
 
             var config = new PostgresBackupperConfig(host, port, username, password);
 
-            services.AddSingleton<IAsyncBackupper>(sp => new PostgresBackupper(dbList, config, new ConsoleDiagnosticLogger(SentryLevel.Info)));
+            services.AddSingleton<IAsyncBackupper>(sp => new PostgresBackupper(dbIgnore, config, new ConsoleDiagnosticLogger(SentryLevel.Info)));
 
             string bucket = environmentVariables["BUCKET"] as string;
             string s3ConnectionString = environmentVariables["S3_CONNECTION_STRING"] as string;
