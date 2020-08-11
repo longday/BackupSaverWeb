@@ -50,9 +50,6 @@ namespace WebUI.Services
             
             Directory.CreateDirectory(outFilePath);
 
-            if (!Directory.EnumerateFiles(outFilePath, "*.*", SearchOption.AllDirectories).Any())
-                throw new DirectoryIsEmptyException("Failed to make dumps. Check the connection");
-            
             var databases = await GetDbListAsync();
 
             Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: Creating sql files...."));
@@ -60,6 +57,9 @@ namespace WebUI.Services
 
             await CreateSqlFilesAsync(databases, outFilePath, Config)
                 .ConfigureAwait(false);
+
+            if (!Directory.EnumerateFiles(outFilePath, "*.*", SearchOption.AllDirectories).Any())
+                throw new DirectoryIsEmptyException("Failed to make dumps. Check the connection");
             
             Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: Successfully..."));
             _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully...");
