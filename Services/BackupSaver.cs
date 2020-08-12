@@ -59,8 +59,6 @@ namespace WebUI.Services
                     SentrySdk.CaptureException(ex);
                 }
             }
-             
-            Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: BackupSaver successfully completed work..."));
         }
 
         private void AddServicesLogs()
