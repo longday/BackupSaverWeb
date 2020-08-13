@@ -1,12 +1,10 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
 using WebUI.Services;
 
 namespace WebUI.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class BackupController : ControllerBase
