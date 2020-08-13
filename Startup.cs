@@ -3,10 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Hosting;
 using WebUI.Extensions;
-using WebUI.Services;
 
 namespace WebUI
 {
@@ -20,10 +18,7 @@ namespace WebUI
         public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddAuthentication("BasicAuthentication")
-                    .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
-            
+        {            
             services.AddControllersWithViews();
 
             services.AddSpaStaticFiles(configuration =>
@@ -52,8 +47,7 @@ namespace WebUI
 
             app.UseRouting();
 
-            app.UseAuthentication();
-            app.UseAuthorization(); 
+            app.UseBasicAuth();
 
             app.UseEndpoints(endpoints =>
             {
@@ -71,6 +65,7 @@ namespace WebUI
                   spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
+
         }
     }
 }
