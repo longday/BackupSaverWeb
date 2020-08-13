@@ -33,13 +33,7 @@ services:
     command: ./start.sh
 
   saver:
-    build: 
-      context: ./
-      dockerfile: Dockerfile.dev
-    volumes: 
-      - ./app
-      - /app/bin
-      - /app/obj
+    image: fa96bf6dcb7d
     environment: 
       - TZ=Europe/Moscow
       - BUCKET=backups 
