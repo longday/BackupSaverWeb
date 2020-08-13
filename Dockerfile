@@ -1,16 +1,20 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS Build
+
+COPY bin/Release/netcoreapp3.1/publish/ /app
+WORKDIR /app
+
+COPY  ./WebUI.csproj ./
+
+RUN dotnet restore
+
+COPY . .
+
+RUN dotnet build ./WebUI.csproj --output /build
+
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
 
 RUN curl --silent --location https://deb.nodesource.com/setup_10.x | bash -
 RUN apt-get install --yes nodejs
-
-WORKDIR /BackupSaverWeb
-COPY . .
-
-RUN dotnet restore "./WebUI.csproj"
-
-RUN dotnet publish "WebUI.csproj" -c Release -o /app/publish
-
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
 
 RUN apt update && \
     apt -y install gnupg2 bzip2 wget && \
@@ -19,8 +23,9 @@ RUN apt update && \
     apt update && \
     apt install postgresql-client-12 -y
 
-COPY --from=build /app/publish .
-
 WORKDIR /app
+COPY --from=Build /build ./ 
+
+ENV ASPNETCORE_URLS=http://+:5000
 
 ENTRYPOINT ["dotnet", "WebUI.dll"]
