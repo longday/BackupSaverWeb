@@ -12,4 +12,6 @@ export PORT=5432
 export SENTRY_CONNECTION_STRING=https://8e386e8cca8c450e85edda1c46469a9a@o421804.ingest.sentry.io/5342167
 export BACKUP_PERIOD_IN_MINUTES=5
 export DB_IGNORE=postgres,builder,template1,template0
+export PASSWORD=1234
+export LOGIN=hello
 dotnet run
