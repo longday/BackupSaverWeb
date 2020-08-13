@@ -32,11 +32,14 @@ namespace WebUI.Middleware
                     var identity = new ClaimsIdentity(claims, "Basic");
                     context.User = new ClaimsPrincipal(identity);
                 }
+                else
+                {
+                    SetUnauthorizedStatusCode(context, "Ivnalid data.Please, try again");
+                }
             }
             else
             {
-                context.Response.StatusCode = 401;
-                context.Response.Headers.Append("WWW-Authenticate", "Basic realm=\"dotnetthoughts.net\"");
+                SetUnauthorizedStatusCode(context, "Enter user data");
             }
 
             await _next.Invoke(context);
@@ -48,6 +51,15 @@ namespace WebUI.Middleware
             var correctPassword = Environment.GetEnvironmentVariable("PASSWORD") as string;
 
             return login == correctLogin && password == correctPassword;
+        }
+
+        private void SetUnauthorizedStatusCode(HttpContext context, string message)
+        {
+            if(string.IsNullOrWhiteSpace(message))
+                throw new ArgumentNullException(nameof(message));
+
+            context.Response.StatusCode = 401;
+            context.Response.Headers.Append("WWW-Authenticate", $"Basic realm=\"{message}\"");
         }
     }
 }
