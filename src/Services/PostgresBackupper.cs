@@ -114,6 +114,10 @@ namespace WebUI.Services
                     Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: Failed to make a {db} backup. You may not have access rights"));
                     File.Delete(resultPath);
                 }
+                else
+                {
+                    Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: {db} backup file weight : {new FileInfo(resultPath).Length}"));
+                }
             }
         }
 
