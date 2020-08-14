@@ -1,0 +1,13 @@
+#https://hub.docker.com/repository/registry-1.docker.io/longday/asp-alpine/tags?page=1
+
+FROM longday/asp-alpine:3.1.401-3.11-node-dev
+
+RUN apk update && apk add bzip2 wget postgresql-client
+
+WORKDIR /app
+COPY ./WebUI.csproj .
+RUN dotnet restore
+
+COPY ./ClientApp/package.json ./ClientApp/package.json
+COPY ./ClientApp/package-lock.json ./ClientApp/package-lock.json
+RUN cd ./ClientApp && npm ci
