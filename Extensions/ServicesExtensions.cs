@@ -17,8 +17,8 @@ namespace WebUI.Extensions
 
             string host = environmentVariables["HOST"] as string;
             string port = environmentVariables["PORT"] as string;
-            string username = environmentVariables["USER_NAME"] as string;
-            string password = environmentVariables["PASSWORD"] as string;
+            string username = environmentVariables["DB_USER_NAME"] as string;
+            string password = environmentVariables["DB_PASSWORD"] as string;
             string dbIgnore = environmentVariables["DB_IGNORE"] as string;
 
             var config = new PostgresBackupperConfig(host, port, username, password);
