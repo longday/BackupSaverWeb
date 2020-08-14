@@ -33,7 +33,7 @@ services:
     command: ./start.sh
 
   saver:
-    image: fa96bf6dcb7d
+    image: b6bf53f82350
     environment: 
       - TZ=Europe/Moscow
       - BUCKET=backups 
@@ -50,6 +50,8 @@ services:
       - SENTRY_CONNECTION_STRING=https://8e386e8cca8c450e85edda1c46469a9a@o421804.ingest.sentry.io/5342167 
       - PASSWORD=1234
       - LOGIN=hello
+    ports: 
+      - 5000:5000
     command: dotnet run
   
   adminer:
