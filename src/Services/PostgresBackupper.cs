@@ -64,15 +64,9 @@ namespace WebUI.Services
             Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: Successfully..."));
             _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully...");
 
-            Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: Creating result archive...."));
-            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Creating result archive....");
-
             string archivePath = await CreateArchiveAsync(outFilePath, $"{DateTime.Now:yyyy-dd-M--HH-mm-ss}")
                 .ConfigureAwait(false);
             
-            Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: Successfully created {Path.GetFileNameWithoutExtension(archivePath)} archive..."));
-            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully created {Path.GetFileNameWithoutExtension(archivePath)} archive...");
-
             Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: Removing intermediate folder {Path.GetFileNameWithoutExtension(outFilePath)}..."));
             _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Removing intermediate folder {Path.GetFileNameWithoutExtension(outFilePath)}...");
             
@@ -116,12 +110,12 @@ namespace WebUI.Services
                 }
                 else
                 {
-                    Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: {db} backup file weight : {new FileInfo(resultPath).Length}"));
+                    Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: {db} backup file weight : {new FileInfo(resultPath).Length} Bytes"));
                 }
             }
         }
 
-        private static async Task<string> CreateArchiveAsync(string path, string outFileName)
+        private async Task<string> CreateArchiveAsync(string path, string outFileName)
         {
             if (string.IsNullOrWhiteSpace(path))
                 throw new ArgumentNullException(nameof(path));
@@ -129,11 +123,17 @@ namespace WebUI.Services
             if (string.IsNullOrWhiteSpace(outFileName))
                 throw new ArgumentNullException(nameof(outFileName));
 
+            Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: Creating result archive...."));
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Creating result archive....");
+
             string archivePath = Path.Combine(Path.GetTempPath(), $"{outFileName}.tar.bz2");
             string createArchiveCommand = $"tar -cvjf {archivePath} {path}";
             
             await ExecuteCommandAsync(createArchiveCommand)
                 .ConfigureAwait(continueOnCapturedContext: false);
+
+            Logs.Add(new Log(DateTime.Now, $"{DateTime.Now}: Successfully created {Path.GetFileNameWithoutExtension(archivePath)} archive..."));
+            _logger.Log(SentryLevel.Info, $"{DateTime.Now}: Successfully created {Path.GetFileNameWithoutExtension(archivePath)} archive...");
 
             return archivePath;
         }
