@@ -14,4 +14,5 @@ export BACKUP_PERIOD_IN_MINUTES=5
 export DB_IGNORE=postgres,builder,template1,template0
 export PASSWORD=1234
 export LOGIN=hello
+cd src
 dotnet run
