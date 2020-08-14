@@ -33,7 +33,7 @@ services:
     command: ./start.sh
 
   saver:
-    image: b6bf53f82350
+    image: af8025ad760f
     environment: 
       - TZ=Europe/Moscow
       - BUCKET=backups 
@@ -52,6 +52,7 @@ services:
       - LOGIN=hello
     ports: 
       - 5000:5000
+      - 5001:5001
     command: dotnet run
   
   adminer:
