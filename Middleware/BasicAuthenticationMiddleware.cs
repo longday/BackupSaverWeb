@@ -31,6 +31,7 @@ namespace WebUI.Middleware
                     var claims = new[] { new Claim("name", login)};
                     var identity = new ClaimsIdentity(claims, "Basic");
                     context.User = new ClaimsPrincipal(identity);
+                    await _next.Invoke(context);
                 }
                 else
                 {
@@ -41,8 +42,6 @@ namespace WebUI.Middleware
             {
                 SetUnauthorizedStatusCode(context, "Enter user data");
             }
-
-            await _next.Invoke(context);
         }
 
         private bool IsValidUser(string login, string password)
